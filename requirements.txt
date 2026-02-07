@@ -1,0 +1,25 @@
+# Core dependencies
+fastapi>=0.115.0
+uvicorn[standard]>=0.32.0
+pydantic>=2.10.0
+httpx>=0.28.0
+python-multipart>=0.0.20
+
+# Database
+# (using sqlite3 from stdlib)
+
+# Testing
+pytest>=8.0.0
+pytest-asyncio>=0.24.0
+pytest-cov>=6.0.0
+
+# Telegram Integration
+python-telegram-bot>=20.0
+pyyaml>=6.0
+
+# APK Download
+gplaycli>=3.29
+requests>=2.32.0
+
+# Development
+ruff>=0.8.0

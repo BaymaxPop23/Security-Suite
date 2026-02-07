@@ -1,0 +1,14 @@
+#!/bin/bash
+# All agents status
+
+echo "🎭⚒️🔍🧠🎯📖🏗️📊📱 Security Suite Agents:"
+echo ""
+curl -s http://localhost:8000/api/maestro/status | jq -r '"🎭 Maestro: \(.status)"'
+curl -s http://localhost:8000/api/forge/status | jq -r '"⚒️ Forge: \(.status)"'
+echo "🔍 Scout: Ready"
+echo "🧠 Strategist: Ready"
+echo "🎯 Hunter: Ready"
+echo "📖 Sage: Ready"
+echo "🏗️ Architect: Ready"
+echo "📊 Oracle: Ready"
+echo "📱 Inspector: Ready"

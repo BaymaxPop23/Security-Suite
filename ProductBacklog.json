@@ -1,0 +1,339 @@
+{
+  "generated_at": "2026-02-07T12:20:00Z",
+  "generated_by": "ProductAgent",
+  "backlog_version": "1.0",
+  "items": [
+    {
+      "id": "PB-001",
+      "title": "Add Ollama health check before agent execution",
+      "type": "bug",
+      "priority_score": 25.0,
+      "impact": 5,
+      "frequency": 5,
+      "confidence": 5,
+      "effort": 1,
+      "problem_statement": "Agents fail immediately when Ollama is not available, causing run failures without clear user feedback. Users don't know if the issue is configuration, connectivity, or model availability.",
+      "evidence_links": [
+        "run_test_81a3e00e - 2/2 agent tasks failed",
+        "Server logs: No pre-flight LLM connectivity check"
+      ],
+      "proposed_solution": "Add health check method to OllamaClient that verifies connectivity and required models before any agent execution. Fail fast with clear error message.",
+      "acceptance_criteria": [
+        "OllamaClient.check_health() returns bool + error details",
+        "RunManager checks Ollama health before starting run",
+        "Dashboard shows clear error: 'Ollama not available'",
+        "API returns 503 with actionable error message",
+        "Includes instructions: 'Run: ollama serve'"
+      ],
+      "labels": ["high-priority", "user-experience", "reliability"]
+    },
+    {
+      "id": "PB-002",
+      "title": "Add graceful degradation for agents without LLM",
+      "type": "feature",
+      "priority_score": 20.0,
+      "impact": 5,
+      "frequency": 4,
+      "confidence": 5,
+      "effort": 2,
+      "problem_statement": "When Ollama is unavailable, the entire system becomes unusable. Many operations (task management, viewing findings, artifact management) don't need LLM but are blocked.",
+      "evidence_links": [
+        "Dashboard still functional without Ollama",
+        "Database operations work independently",
+        "Only agent reasoning requires LLM"
+      ],
+      "proposed_solution": "Implement fallback modes: (1) Static analysis tools run without LLM, (2) Pattern-based detection works without reasoning, (3) Dashboard functions fully, (4) Manual task creation enabled.",
+      "acceptance_criteria": [
+        "Tool runner works without LLM (grep, semgrep, etc.)",
+        "Pattern-based findings generated without LLM reasoning",
+        "Dashboard shows 'Limited Mode' banner when Ollama down",
+        "Users can view/manage existing tasks and findings",
+        "Manual task creation works without LLM"
+      ],
+      "labels": ["resilience", "feature", "user-experience"]
+    },
+    {
+      "id": "PB-003",
+      "title": "Implement comprehensive test coverage with mocks",
+      "type": "techdebt",
+      "priority_score": 18.75,
+      "impact": 5,
+      "frequency": 5,
+      "confidence": 5,
+      "effort": 3,
+      "problem_statement": "Only 4 basic schema tests exist. No integration tests, no agent tests, no API tests. Can't verify system works without manual testing. Risk of regressions.",
+      "evidence_links": [
+        "tests/ directory has only 3 files",
+        "No test_storage.py execution",
+        "No test_dry_run.py execution",
+        "No API endpoint tests",
+        "No agent unit tests"
+      ],
+      "proposed_solution": "Build comprehensive test suite with: (1) Mock Ollama responses for agent tests, (2) Integration tests for all API endpoints, (3) End-to-end workflow tests, (4) Coverage report generation.",
+      "acceptance_criteria": [
+        "All agents have unit tests with mocked LLM",
+        "All API endpoints have integration tests",
+        "Storage layer fully tested",
+        "Orchestrator logic tested with various scenarios",
+        "Test coverage >= 80%",
+        "pytest-cov report generated"
+      ],
+      "labels": ["testing", "quality", "techdebt"]
+    },
+    {
+      "id": "PB-004",
+      "title": "Add real-time WebSocket updates to dashboard",
+      "type": "UX",
+      "priority_score": 16.0,
+      "impact": 4,
+      "frequency": 5,
+      "confidence": 4,
+      "effort": 2,
+      "problem_statement": "Dashboard polls every 10s, causing stale data and poor UX during active runs. Users manually refresh to see updates. Wastes bandwidth with repeated polls.",
+      "evidence_links": [
+        "dashboard/v2/assets/main.js - setInterval(refreshAll, 10000)",
+        "Server logs show repeated GET /api/tasks calls"
+      ],
+      "proposed_solution": "Implement WebSocket endpoint for real-time push updates. Broadcast task status changes, new findings, run completions. Dashboard subscribes and updates instantly.",
+      "acceptance_criteria": [
+        "WebSocket endpoint /ws implemented",
+        "Dashboard connects on load",
+        "Task status updates pushed in real-time",
+        "New findings appear without refresh",
+        "Run completion triggers notification",
+        "Fallback to polling if WebSocket fails",
+        "Connection status indicator in UI"
+      ],
+      "labels": ["UX", "performance", "dashboard"]
+    },
+    {
+      "id": "PB-005",
+      "title": "Add LLM response caching layer",
+      "type": "performance",
+      "priority_score": 15.0,
+      "impact": 5,
+      "frequency": 3,
+      "confidence": 5,
+      "effort": 2,
+      "problem_statement": "Identical prompts to LLM (e.g., analyzing same code snippet twice) generate duplicate API calls. Wastes compute, slows runs, increases cost if using remote LLM.",
+      "evidence_links": [
+        "core/llm/ollama_client.py - No caching mechanism",
+        "Agents may analyze same files multiple times"
+      ],
+      "proposed_solution": "Implement Redis-based or SQLite-based cache for LLM responses keyed by (model, prompt_hash). TTL-based expiration. Cache hit/miss metrics.",
+      "acceptance_criteria": [
+        "LLM responses cached with SHA256(prompt) key",
+        "Cache TTL configurable (default 24h)",
+        "Cache hit rate metric exposed",
+        "Bypass cache with --no-cache flag",
+        "Cache invalidation API endpoint",
+        "10x+ speedup for repeated analysis"
+      ],
+      "labels": ["performance", "cost-optimization"]
+    },
+    {
+      "id": "PB-006",
+      "title": "Dashboard loading states and error handling",
+      "type": "UX",
+      "priority_score": 12.0,
+      "impact": 3,
+      "frequency": 5,
+      "confidence": 4,
+      "effort": 1,
+      "problem_statement": "Dashboard shows blank screens during API calls. No error messages when API fails. Users don't know if system is loading, broken, or empty.",
+      "evidence_links": [
+        "dashboard/v2/assets/main.js - No loading indicators",
+        "No try-catch error handling in fetch calls",
+        "No user feedback for failed operations"
+      ],
+      "proposed_solution": "Add loading skeletons, error boundaries, retry buttons, and toast notifications for all async operations.",
+      "acceptance_criteria": [
+        "Loading skeletons for all data grids",
+        "Error messages for failed API calls",
+        "Retry button on failures",
+        "Toast notifications for actions",
+        "Offline mode detection",
+        "Network error recovery"
+      ],
+      "labels": ["UX", "dashboard", "polish"]
+    },
+    {
+      "id": "PB-007",
+      "title": "Add metrics dashboard for run analytics",
+      "type": "observability",
+      "priority_score": 12.0,
+      "impact": 4,
+      "frequency": 3,
+      "confidence": 5,
+      "effort": 2,
+      "problem_statement": "No visibility into system performance. Can't answer: What's average run time? Which agents fail most? What's finding distribution? How many runs per day?",
+      "evidence_links": [
+        "No metrics collection in AgentRun",
+        "No analytics dashboard",
+        "No time-series data"
+      ],
+      "proposed_solution": "Create /metrics dashboard with: run duration trends, agent success rates, finding severity distribution, daily run counts, task completion time.",
+      "acceptance_criteria": [
+        "Metrics collected in AgentRun",
+        "/dashboard/metrics page created",
+        "Charts: run duration over time",
+        "Charts: agent success rate",
+        "Charts: finding severity breakdown",
+        "Export metrics as CSV",
+        "7-day and 30-day views"
+      ],
+      "labels": ["observability", "analytics", "dashboard"]
+    },
+    {
+      "id": "PB-008",
+      "title": "Add example agent template and developer guide",
+      "type": "feature",
+      "priority_score": 10.0,
+      "impact": 5,
+      "frequency": 2,
+      "confidence": 5,
+      "effort": 2,
+      "problem_statement": "No documentation for building custom agents. Users want to add specialized agents (mobile, cloud, infrastructure) but don't have starter template or guide.",
+      "evidence_links": [
+        "No CONTRIBUTING.md",
+        "No agents/example_agent/ template",
+        "No agent development guide"
+      ],
+      "proposed_solution": "Create agents/example_agent/ with fully documented template. Write AGENT_DEVELOPMENT.md with step-by-step guide, best practices, testing approach.",
+      "acceptance_criteria": [
+        "agents/example_agent/ template created",
+        "AGENT_DEVELOPMENT.md written",
+        "Template includes: plan(), run(), report()",
+        "Example prompts provided",
+        "Testing examples included",
+        "Registration instructions clear",
+        "Can copy template and have working agent in 30min"
+      ],
+      "labels": ["documentation", "developer-experience"]
+    },
+    {
+      "id": "PB-009",
+      "title": "Add retry mechanism with exponential backoff",
+      "type": "reliability",
+      "priority_score": 9.38,
+      "impact": 5,
+      "frequency": 3,
+      "confidence": 5,
+      "effort": 4,
+      "problem_statement": "Transient failures (network timeouts, Ollama overload, tool crashes) cause entire runs to fail. No automatic retry. Users must restart manually.",
+      "evidence_links": [
+        "core/llm/ollama_client.py has basic retries",
+        "core/tools/tool_runner.py - No retry logic",
+        "Agents don't retry on failure"
+      ],
+      "proposed_solution": "Implement retry decorator with exponential backoff. Apply to LLM calls, tool execution, external API calls. Configurable max attempts. Log retry attempts.",
+      "acceptance_criteria": [
+        "@retry decorator implemented",
+        "Exponential backoff: 1s, 2s, 4s, 8s",
+        "Max retries configurable (default 3)",
+        "Retry attempts logged",
+        "Different strategies for different errors",
+        "Circuit breaker for persistent failures",
+        "Metrics: retry count per operation"
+      ],
+      "labels": ["reliability", "resilience"]
+    },
+    {
+      "id": "PB-010",
+      "title": "Add favicon and UI polish",
+      "type": "UX",
+      "priority_score": 6.4,
+      "impact": 2,
+      "frequency": 4,
+      "confidence": 4,
+      "effort": 1,
+      "problem_statement": "Missing favicon causes 404 errors. UI lacks polish (no animations, harsh transitions, inconsistent spacing). Feels unfinished.",
+      "evidence_links": [
+        "Server logs: GET /favicon.ico - 404 Not Found",
+        "Dashboard has no loading animations",
+        "No smooth transitions"
+      ],
+      "proposed_solution": "Add shield favicon, smooth transitions, loading animations, consistent spacing, micro-interactions for better feel.",
+      "acceptance_criteria": [
+        "Shield favicon.ico added",
+        "Card hover animations smooth",
+        "Loading spinners for async ops",
+        "Consistent 8px spacing grid",
+        "Toast notifications slide in",
+        "Button click feedback",
+        "No 404 errors in console"
+      ],
+      "labels": ["UX", "polish", "quick-win"]
+    },
+    {
+      "id": "PB-011",
+      "title": "Add finding deduplication logic",
+      "type": "feature",
+      "priority_score": 6.25,
+      "impact": 5,
+      "frequency": 5,
+      "confidence": 5,
+      "effort": 8,
+      "problem_statement": "Multiple agents may find the same vulnerability, creating duplicate findings. Wastes analyst time reviewing duplicates. Inflates finding counts.",
+      "evidence_links": [
+        "No deduplication in FindingStore",
+        "Agents run independently",
+        "Hash-based dedup not implemented"
+      ],
+      "proposed_solution": "Implement finding fingerprinting: hash(severity + affected_asset + title). Check for duplicates before creating. Link duplicates. Show 'Similar findings' in UI.",
+      "acceptance_criteria": [
+        "Finding fingerprint calculated",
+        "Duplicate check before insert",
+        "Duplicates linked to original",
+        "UI shows 'Similar: 3 findings'",
+        "Dedup configurable per severity",
+        "Manual merge/split for false positives",
+        "Dedup report in analytics"
+      ],
+      "labels": ["feature", "quality", "findings"]
+    },
+    {
+      "id": "PB-012",
+      "title": "Add Docker Compose for one-command setup",
+      "type": "developer-experience",
+      "priority_score": 5.0,
+      "impact": 5,
+      "frequency": 2,
+      "confidence": 5,
+      "effort": 2,
+      "problem_statement": "Setup requires: Python venv, Ollama install, model pulls, service starts. New users face 20+ minute setup. Multiple failure points.",
+      "evidence_links": [
+        "HOW_TO_RUN.md lists 10+ manual steps",
+        "No containerization",
+        "No docker-compose.yml"
+      ],
+      "proposed_solution": "Create docker-compose.yml with: API service, Ollama service, optional dashboard Nginx. One command: docker-compose up. Pre-configured.",
+      "acceptance_criteria": [
+        "docker-compose.yml created",
+        "Services: api, ollama, dashboard",
+        "Ollama models pre-pulled in image",
+        "docker-compose up starts everything",
+        "Health checks for all services",
+        "Volume mounts for data persistence",
+        "README updated with Docker instructions",
+        "Works on macOS, Linux, Windows"
+      ],
+      "labels": ["developer-experience", "deployment"]
+    }
+  ],
+  "summary": {
+    "total_items": 12,
+    "by_type": {
+      "bug": 1,
+      "feature": 4,
+      "techdebt": 1,
+      "UX": 3,
+      "performance": 1,
+      "observability": 1,
+      "reliability": 1,
+      "developer-experience": 1
+    },
+    "avg_priority_score": 13.1,
+    "high_priority_count": 5
+  }
+}

@@ -1,0 +1,103 @@
+{
+  "agents": [
+    {
+      "name": "planning",
+      "display_name": "Planning Agent",
+      "emoji": "📋",
+      "description": "Orchestrator brain - breaks scope into tasks, prioritizes, assigns to agents",
+      "model": "llama3.1:70b",
+      "capabilities": [
+        "scope_analysis",
+        "task_generation",
+        "prioritization",
+        "dependency_mapping"
+      ]
+    },
+    {
+      "name": "recon",
+      "display_name": "Recon Agent",
+      "emoji": "🌐",
+      "description": "Asset inventory + endpoint mapping + tech fingerprinting",
+      "model": "llama3.1:8b",
+      "capabilities": [
+        "subdomain_enumeration",
+        "port_scanning",
+        "service_detection",
+        "technology_identification"
+      ],
+      "tools": [
+        "subfinder",
+        "httpx",
+        "nmap",
+        "whatweb"
+      ]
+    },
+    {
+      "name": "security_testing",
+      "display_name": "Security Testing Agent",
+      "emoji": "⚔️",
+      "description": "Safe validation checks with dry-run support",
+      "model": "llama3.1:8b",
+      "capabilities": [
+        "vulnerability_scanning",
+        "endpoint_testing",
+        "validation",
+        "safe_poc_generation"
+      ],
+      "tools": [
+        "nuclei",
+        "custom_validators"
+      ]
+    },
+    {
+      "name": "code_review",
+      "display_name": "Code Review Agent",
+      "emoji": "🔍",
+      "description": "Reviews repo code + decompiled output with file:line citations",
+      "model": "codellama:7b",
+      "capabilities": [
+        "static_code_analysis",
+        "vulnerability_detection",
+        "pattern_matching",
+        "remediation_guidance"
+      ],
+      "tools": [
+        "semgrep",
+        "bandit",
+        "grep",
+        "ripgrep"
+      ]
+    },
+    {
+      "name": "apk_analyzer",
+      "display_name": "APK Analyzer Agent",
+      "emoji": "📦",
+      "description": "Extracts manifest, identifies endpoints/hosts, decompiles safely",
+      "model": "llama3.1:8b",
+      "capabilities": [
+        "manifest_extraction",
+        "decompilation",
+        "endpoint_discovery",
+        "secrets_detection"
+      ],
+      "tools": [
+        "apktool",
+        "jadx",
+        "aapt"
+      ]
+    },
+    {
+      "name": "reporting",
+      "display_name": "Final Reporting Agent",
+      "emoji": "📊",
+      "description": "Generates beautiful HTML reports with executive summary",
+      "model": "llama3.1:8b",
+      "capabilities": [
+        "report_generation",
+        "html_templating",
+        "evidence_compilation",
+        "executive_summary"
+      ]
+    }
+  ]
+}

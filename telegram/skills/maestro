@@ -1,0 +1,27 @@
+#!/bin/bash
+# Maestro command handler
+
+case "$1" in
+  status)
+    curl -s http://localhost:8000/api/maestro/status | jq -r '
+      "🎭 Maestro Status:\n" +
+      "Status: \(.status)\n" +
+      "Active Features: \(.active_features)\n" +
+      "Completed: \(.completed_features)\n" +
+      "Backlog: \(.backlog_size) improvements"
+    '
+    ;;
+  build)
+    shift
+    REQUEST="$*"
+    curl -s -X POST http://localhost:8000/api/maestro/build \
+      -H "Content-Type: application/json" \
+      -d "{\"request\": \"$REQUEST\"}" | jq .
+    ;;
+  features)
+    curl -s http://localhost:8000/api/maestro/features | jq .
+    ;;
+  *)
+    echo "Usage: maestro {status|build|features}"
+    ;;
+esac

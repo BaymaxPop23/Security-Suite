@@ -1,0 +1,56 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "apkslayer"
+version = "2.0.0"
+description = "Android APK security vulnerability scanner - Slay vulnerabilities before they slay your users"
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.8"
+authors = [
+    {name = "Sai Jagadeesh"}
+]
+keywords = ["android", "apk", "security", "vulnerability", "scanner", "pentesting"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Information Technology",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Security",
+    "Topic :: Software Development :: Testing",
+]
+
+[project.optional-dependencies]
+dynamic = [
+    "uiautomator2>=3.0.0",
+    "frida-tools>=12.0.0",
+    "mitmproxy>=10.0.0",
+]
+pdf = [
+    "weasyprint>=52.0",
+]
+
+[project.scripts]
+apkslayer = "apkslayer.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/Sai-Jagadeesh/apk-analyzer"
+Repository = "https://github.com/Sai-Jagadeesh/apk-analyzer"
+Issues = "https://github.com/Sai-Jagadeesh/apk-analyzer/issues"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["apkslayer*"]
+
+[tool.setuptools.package-data]
+"*" = ["*.json"]

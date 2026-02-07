@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Security Suite - Command Center</title>
+    <link rel="stylesheet" href="/static/main.css">
+</head>
+<body>
+    <div class="app">
+        <!-- Header -->
+        <header class="header">
+            <h1>🛡️ Security Suite Command Center</h1>
+            <div class="header-actions">
+                <button class="btn btn-primary" onclick="showNewRunModal()">🚀 New Run</button>
+                <button class="btn" onclick="refreshAll()">🔄 Refresh</button>
+                <a href="/docs" target="_blank" class="btn">📖 API Docs</a>
+            </div>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="nav">
+            <button class="nav-item active" onclick="showView('agents')">🎭 Agents</button>
+            <button class="nav-item" onclick="showView('kanban')">📋 Tasks</button>
+            <button class="nav-item" onclick="showView('findings')">🔍 Findings</button>
+            <button class="nav-item" onclick="showView('runs')">⚡ Runs</button>
+            <button class="nav-item" onclick="showView('reports')">📊 Reports</button>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main">
+            <!-- Agents View -->
+            <div id="agents-view" class="view active">
+                <h2>🛡️ Security Agents</h2>
+
+                <!-- System Status -->
+                <div class="agent-section">
+                    <h3>⚡ System Status</h3>
+                    <div id="system-status" class="agent-status">
+                        <div class="status-card">
+                            <p><strong>Status:</strong> <span style="color: #10b981;">✅ Online</span></p>
+                            <p><strong>Active Agents:</strong> 2</p>
+                            <p><strong>Tools:</strong> EASD, APKSlayer</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recon Agent -->
+                <div class="agent-section">
+                    <h3>🔍 Recon Agent - EASD</h3>
+                    <div class="agent-status">
+                        <div class="status-card">
+                            <p><strong>Tool:</strong> External Attack Surface Discovery</p>
+                            <p><strong>Capabilities:</strong></p>
+                            <ul style="margin-left: 1.5rem; color: #94a3b8;">
+                                <li>Subdomain enumeration (CT, DNS, passive)</li>
+                                <li>Port scanning (100+ ports)</li>
+                                <li>Technology fingerprinting (60+ signatures)</li>
+                                <li>Cloud asset discovery (S3, Azure, GCP)</li>
+                                <li>GitHub intelligence & secrets</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- APK Analyzer Agent -->
+                <div class="agent-section">
+                    <h3>📱 APK Analyzer - APKSlayer</h3>
+                    <div class="agent-status">
+                        <div class="status-card">
+                            <p><strong>Tool:</strong> Android Security Analyzer</p>
+                            <p><strong>Capabilities:</strong></p>
+                            <ul style="margin-left: 1.5rem; color: #94a3b8;">
+                                <li>77+ vulnerability patterns (OWASP Mobile Top 10)</li>
+                                <li>Manifest & permission analysis</li>
+                                <li>Hardcoded credentials detection</li>
+                                <li>WebView, Intent, ContentProvider security</li>
+                                <li>Attack surface mapping</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Kanban Board View -->
+            <div id="kanban-view" class="view">
+                <h2>Task Board</h2>
+                <div class="kanban-board">
+                    <div class="kanban-column">
+                        <div class="kanban-header">
+                            <h3>📥 Backlog</h3>
+                            <span class="count" id="backlog-count">0</span>
+                        </div>
+                        <div class="kanban-tasks" id="backlog-tasks"></div>
+                    </div>
+
+                    <div class="kanban-column">
+                        <div class="kanban-header">
+                            <h3>🔄 In Progress</h3>
+                            <span class="count" id="in-progress-count">0</span>
+                        </div>
+                        <div class="kanban-tasks" id="in-progress-tasks"></div>
+                    </div>
+
+                    <div class="kanban-column">
+                        <div class="kanban-header">
+                            <h3>🚫 Blocked</h3>
+                            <span class="count" id="blocked-count">0</span>
+                        </div>
+                        <div class="kanban-tasks" id="blocked-tasks"></div>
+                    </div>
+
+                    <div class="kanban-column">
+                        <div class="kanban-header">
+                            <h3>✅ Completed</h3>
+                            <span class="count" id="completed-count">0</span>
+                        </div>
+                        <div class="kanban-tasks" id="completed-tasks"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Findings View -->
+            <div id="findings-view" class="view">
+                <h2>Security Findings</h2>
+                <div class="findings-filters">
+                    <select id="severity-filter" onchange="filterFindings()">
+                        <option value="">All Severities</option>
+                        <option value="critical">Critical</option>
+                        <option value="high">High</option>
+                        <option value="medium">Medium</option>
+                        <option value="low">Low</option>
+                    </select>
+                    <select id="status-filter" onchange="filterFindings()">
+                        <option value="">All Statuses</option>
+                        <option value="open">Open</option>
+                        <option value="in_review">In Review</option>
+                        <option value="confirmed">Confirmed</option>
+                    </select>
+                </div>
+                <div id="findings-list" class="findings-list"></div>
+            </div>
+
+            <!-- Runs View -->
+            <div id="runs-view" class="view">
+                <h2>Agent Runs</h2>
+                <div id="runs-list" class="runs-list"></div>
+            </div>
+
+            <!-- Reports View -->
+            <div id="reports-view" class="view">
+                <h2>Generated Reports</h2>
+                <div id="reports-list" class="reports-list"></div>
+            </div>
+        </main>
+    </div>
+
+    <!-- New Run Modal -->
+    <div id="new-run-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Start New Security Run</h2>
+                <button class="modal-close" onclick="closeNewRunModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>🎯 Targets (one per line)</label>
+                    <textarea id="in-scope" rows="8" placeholder="Domains for EASD recon:&#10;example.com&#10;audible.com&#10;&#10;APKs for security analysis:&#10;/path/to/app.apk&#10;https://example.com/app.apk"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="dry-run">
+                        🧪 Dry Run (simulated testing - uncheck for real EASD scan)
+                    </label>
+                </div>
+                <div style="background: #1e293b; padding: 1rem; border-radius: 6px; margin-top: 1rem;">
+                    <p style="margin: 0; font-size: 0.9rem; color: #94a3b8;">
+                        <strong>Domains:</strong> EASD performs attack surface discovery<br>
+                        <strong>APKs:</strong> APKSlayer analyzes for security vulnerabilities
+                    </p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" onclick="closeNewRunModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="startNewRun()">Start Run</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/main.js"></script>
+</body>
+</html>

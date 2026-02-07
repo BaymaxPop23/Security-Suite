@@ -1,0 +1,16 @@
+#!/bin/bash
+# Forge command handler
+
+case "$1" in
+  status)
+    curl -s http://localhost:8000/api/forge/status | jq -r '
+      "⚒️ Forge Status:\n" +
+      "Status: \(.status)\n" +
+      "Active Tasks: \(.active_tasks)\n" +
+      "Completed: \(.completed_tasks)"
+    '
+    ;;
+  *)
+    echo "Usage: forge {status}"
+    ;;
+esac

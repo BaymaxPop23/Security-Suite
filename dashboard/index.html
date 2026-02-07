@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Security Suite Dashboard</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            padding: 20px;
+        }
+        .container { max-width: 1400px; margin: 0 auto; }
+        h1 { margin-bottom: 30px; color: #60a5fa; }
+        .agents-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        .agent-card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 20px;
+        }
+        .agent-card h3 { color: #60a5fa; margin-bottom: 10px; }
+        .agent-status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .status-active { background: #10b981; color: white; }
+        .status-idle { background: #6b7280; color: white; }
+        .control-panel {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 30px;
+        }
+        .form-group { margin-bottom: 20px; }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #94a3b8;
+            font-weight: 500;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 12px;
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            color: #e2e8f0;
+            font-size: 14px;
+        }
+        button {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        button:hover { background: #2563eb; }
+        .output {
+            margin-top: 20px;
+            padding: 20px;
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            max-height: 400px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🛡️ Security Testing Suite Dashboard</h1>
+
+        <div class="agents-grid">
+            <div class="agent-card">
+                <h3>🌐 ReconBot</h3>
+                <span class="agent-status status-active">Active</span>
+                <p style="margin-top: 10px; color: #94a3b8;">
+                    Reconnaissance & Attack Surface Mapping
+                </p>
+            </div>
+
+            <div class="agent-card">
+                <h3>📋 PlannerBot</h3>
+                <span class="agent-status status-active">Active</span>
+                <p style="margin-top: 10px; color: #94a3b8;">
+                    Strategic Planning & Prioritization
+                </p>
+            </div>
+
+            <div class="agent-card">
+                <h3>⚔️ PentestBot</h3>
+                <span class="agent-status status-active">Active</span>
+                <p style="margin-top: 10px; color: #94a3b8;">
+                    Security Testing & Vulnerability Discovery
+                </p>
+            </div>
+
+            <div class="agent-card">
+                <h3>🔍 ReviewBot</h3>
+                <span class="agent-status status-active">Active</span>
+                <p style="margin-top: 10px; color: #94a3b8;">
+                    Code Security Review
+                </p>
+            </div>
+        </div>
+
+        <div class="control-panel">
+            <h2 style="margin-bottom: 20px;">🚀 Start Security Scan</h2>
+
+            <div class="form-group">
+                <label>Target Domain</label>
+                <input type="text" id="target" placeholder="example.com" />
+            </div>
+
+            <div class="form-group">
+                <label>Scope (comma-separated)</label>
+                <input type="text" id="scope" placeholder="*.example.com, api.example.com" />
+            </div>
+
+            <div class="form-group">
+                <label>Agent</label>
+                <select id="agent" style="width: 100%; padding: 12px; background: #0f172a; border: 1px solid #334155; border-radius: 6px; color: #e2e8f0;">
+                    <option value="recon-agent">ReconBot (Reconnaissance)</option>
+                    <option value="planning-agent">PlannerBot (Planning)</option>
+                    <option value="testing-agent">PentestBot (Testing)</option>
+                    <option value="code-reviewer">ReviewBot (Code Review)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Custom Message (Optional)</label>
+                <textarea id="message" rows="3" placeholder="Custom instructions for the agent..."></textarea>
+            </div>
+
+            <button onclick="startScan()">Start Scan</button>
+
+            <div id="output" class="output" style="display: none;">
+                <strong>Output:</strong>
+                <pre id="outputText"></pre>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function startScan() {
+            const target = document.getElementById('target').value;
+            const scope = document.getElementById('scope').value;
+            const agent = document.getElementById('agent').value;
+            const customMessage = document.getElementById('message').value;
+
+            const message = customMessage || `Start security scan on target: ${target}, scope: ${scope}`;
+
+            const output = document.getElementById('output');
+            const outputText = document.getElementById('outputText');
+
+            output.style.display = 'block';
+            outputText.textContent = 'Starting scan...\n';
+
+            try {
+                const response = await fetch(`http://localhost:3000/api/agent/${agent}/execute`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message })
+                });
+
+                const result = await response.json();
+                outputText.textContent += '\n' + JSON.stringify(result, null, 2);
+            } catch (error) {
+                outputText.textContent += '\nError: ' + error.message;
+                outputText.textContent += '\n\nMake sure the API server is running:';
+                outputText.textContent += '\n  cd ~/Desktop/security-suite/api';
+                outputText.textContent += '\n  node server.js';
+            }
+        }
+    </script>
+</body>
+</html>

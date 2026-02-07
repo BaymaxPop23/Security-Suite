@@ -1,0 +1,25 @@
+{
+  "base_url": "http://localhost:11434",
+  "models": {
+    "reasoning": "llama3.1:8b",
+    "code": "codellama:7b",
+    "planning": "llama3.1:70b",
+    "fast": "llama3.1:8b"
+  },
+  "agent_models": {
+    "planning": "llama3.1:70b",
+    "recon": "llama3.1:8b",
+    "security_testing": "llama3.1:8b",
+    "code_review": "codellama:7b",
+    "apk_analyzer": "llama3.1:8b",
+    "reporting": "llama3.1:8b"
+  },
+  "timeout": 120,
+  "max_retries": 3,
+  "temperature": {
+    "deterministic": 0.0,
+    "low": 0.1,
+    "medium": 0.5,
+    "high": 0.9
+  }
+}

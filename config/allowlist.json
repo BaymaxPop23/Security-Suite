@@ -1,0 +1,48 @@
+{
+  "recon": [
+    "subfinder -d {domain} -silent",
+    "subfinder -d {domain} -o {output_file}",
+    "httpx -l {input_file} -silent -status-code -title",
+    "httpx -l {input_file} -o {output_file}",
+    "nmap -p- {target} -oN {output_file}",
+    "nmap -sV -sC {target} -oN {output_file}",
+    "whatweb {url} --log-json {output_file}",
+    "dig {domain}",
+    "whois {domain}"
+  ],
+  "code_search": [
+    "grep -r {pattern} {directory}",
+    "grep -rn {pattern} {directory}",
+    "rg {pattern} {directory} --json",
+    "rg {pattern} {directory}",
+    "find {directory} -name {pattern} -type f",
+    "find {directory} -type f -name {pattern}"
+  ],
+  "apk_analysis": [
+    "apktool d {apk_file} -o {output_dir}",
+    "jadx -d {output_dir} {apk_file}",
+    "jadx --no-res -d {output_dir} {apk_file}",
+    "aapt dump badging {apk_file}",
+    "aapt dump permissions {apk_file}",
+    "unzip -l {apk_file}",
+    "unzip -q {apk_file} -d {output_dir}"
+  ],
+  "static_analysis": [
+    "semgrep --config auto {directory} --json -o {output_file}",
+    "semgrep --config {config} {directory} --json -o {output_file}",
+    "trivy fs {directory} --format json -o {output_file}",
+    "trivy fs {directory} --severity HIGH,CRITICAL --format json -o {output_file}",
+    "bandit -r {directory} -f json -o {output_file}",
+    "bandit -r {directory} -ll -f json -o {output_file}"
+  ],
+  "safe_utilities": [
+    "cat {file}",
+    "head -n {lines} {file}",
+    "tail -n {lines} {file}",
+    "wc -l {file}",
+    "file {file}",
+    "stat {file}",
+    "ls -la {directory}",
+    "tree -L {depth} {directory}"
+  ]
+}
