@@ -103,7 +103,7 @@ Security Suite is an automated security testing platform that combines **EASD** 
 ### Telegram Bot Interface
 *Remote scanning and APK upload via Telegram*
 
-> **Note**: To add a Telegram bot screenshot, open your Telegram app, interact with the bot using `/start` or upload an APK, and take a screenshot. Save it as `screenshots/telegram-bot.png`.
+![Telegram Bot](screenshots/telegram-bot.png)
 
 > The Telegram bot supports domain scanning, APK file uploads, and provides real-time notifications with automatic report delivery. Use `/start` to initialize and upload APK files directly to trigger analysis.
 
