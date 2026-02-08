@@ -61,9 +61,6 @@ Thumbs.db
 .env
 *.env
 
-# Screenshots
-screenshots/
-
 # Temporary files
 messages/
 knowledge/
