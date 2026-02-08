@@ -129,8 +129,9 @@ class ReconAgent(BaseAgent):
         cmd = [
             "easd", "discover",
             "--domains", target,
-            "--intensity", "normal",
-            "--passive-only"  # Start with passive only for safety
+            "--intensity", "normal"
+            # Removed --passive-only to enable full active reconnaissance
+            # including port scanning, subdomain enumeration, and tech fingerprinting
         ]
 
         logger.info(f"Command: {' '.join(cmd)}")
