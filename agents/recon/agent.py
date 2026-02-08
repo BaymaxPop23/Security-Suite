@@ -229,13 +229,40 @@ class ReconAgent(BaseAgent):
                         report_data = json.load(f)
                         # EASD report structure varies, extract what we can
                         if isinstance(report_data, dict):
+                            # Extract IPs
+                            ip_addresses = report_data.get('ip_addresses', [])
+
+                            # Extract unique hostnames/subdomains from IP addresses
+                            all_hostnames = set()
+                            all_ports = []
+
+                            for ip in ip_addresses:
+                                # Collect hostnames from each IP
+                                hostnames = ip.get('hostnames', [])
+                                all_hostnames.update(hostnames)
+
+                                # Collect ports from each IP
+                                ip_addr = ip.get('address', '')
+                                for port in ip.get('ports', []):
+                                    all_ports.append({
+                                        "ip": ip_addr,
+                                        "port": port.get('number'),
+                                        "protocol": port.get('protocol', 'tcp'),
+                                        "state": port.get('state', 'unknown'),
+                                        "service": port.get('service', {}).get('name', 'unknown')
+                                    })
+
                             results_data.update({
-                                "subdomains": report_data.get('subdomains', report_data.get('domains', [])),
-                                "ips": report_data.get('ips', report_data.get('ip_addresses', [])),
-                                "ports": report_data.get('ports', []),
-                                "technologies": report_data.get('technologies', report_data.get('tech_stack', []))
+                                "subdomains": list(all_hostnames),
+                                "ips": ip_addresses,
+                                "ports": all_ports,
+                                "technologies": report_data.get('technologies', report_data.get('tech_stack', [])),
+                                "web_applications": report_data.get('web_applications', []),
+                                "certificates": report_data.get('certificates', []),
+                                "cloud_assets": report_data.get('cloud_assets', []),
+                                "findings": report_data.get('findings', [])
                             })
-                        logger.info(f"Parsed report: {len(results_data.get('subdomains', []))} subdomains")
+                        logger.info(f"Parsed report: {len(results_data.get('subdomains', []))} subdomains, {len(results_data.get('ports', []))} ports")
                 except Exception as e:
                     logger.warning(f"Failed to parse JSON report: {e}")
 
