@@ -75,25 +75,35 @@ Security Suite is an automated security testing platform that combines **EASD** 
 ### Dashboard Overview
 *Main dashboard showing system status and quick actions*
 
+![Dashboard Overview](screenshots/dashboard.png)
+
 > Navigate to `http://localhost:8000/dashboard` to see the interactive dashboard with real-time task monitoring, run history, and system health.
 
 ### Kanban Board - Task Management
 *Real-time task tracking across different stages (Backlog → In Progress → Completed)*
+
+![Kanban Board](screenshots/kanban.png)
 
 > The Kanban board displays tasks dynamically with status badges and progress indicators. Failed tasks are shown in the Blocked column with ❌ FAILED markers.
 
 ### EASD Reconnaissance Report
 *Interactive HTML report with subdomain findings and attack surface mapping*
 
+![EASD Report](screenshots/easd-report.png)
+
 > EASD generates comprehensive HTML reports with subdomain enumeration, port scanning results, technology detection, and SSL/TLS analysis. Reports are accessible via the dashboard or API endpoint `/api/reports/{run_id}/html`.
 
 ### APKSlayer Security Report
 *Detailed vulnerability analysis for Android applications*
 
+![APKSlayer Report](screenshots/apk-report.png)
+
 > APKSlayer produces interactive HTML reports showing 77+ vulnerability patterns including OWASP Mobile Top 10, exported components, hardcoded credentials, and WebView security issues.
 
 ### Telegram Bot Interface
 *Remote scanning and APK upload via Telegram*
+
+> **Note**: To add a Telegram bot screenshot, open your Telegram app, interact with the bot using `/start` or upload an APK, and take a screenshot. Save it as `screenshots/telegram-bot.png`.
 
 > The Telegram bot supports domain scanning, APK file uploads, and provides real-time notifications with automatic report delivery. Use `/start` to initialize and upload APK files directly to trigger analysis.
 
